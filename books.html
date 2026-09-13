@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Китобҳои дарсӣ — Химия 8–9 синф">
-<title data-i18n="booksTitle">Китобҳо / Учебники — SCANNERI ELEMENTHO</title>
+<meta name="description" content="Китобҳои дарсии химия — SCANNERI ELEMENTHO">
+<title>Китобҳо — SCANNERI ELEMENTHO</title>
 <style>
 :root{
   --bg:#0c1222;--gold:#c9a227;--gold-l:#e8d48b;--teal:#2dd4bf;
@@ -16,12 +16,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px;border-bottom:1px solid rgba(148,163,184,.1);align-items:center}
 .nav a{color:var(--gold-l);text-decoration:none;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:.82rem;font-weight:600}
 .nav a:hover,.nav a.active{background:rgba(201,162,39,.14);border-color:var(--gold)}
-.lang-bar{display:flex;gap:4px;margin-left:auto}
-.lang-bar .lang-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-size:.75rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer}
-.lang-bar .lang-btn:hover{color:var(--gold-l);border-color:var(--gold)}
-.lang-bar .lang-btn.active{color:#0c1222;background:linear-gradient(135deg,#c9a227,#a8841a);border-color:var(--gold)}
 .wrap{max-width:960px;margin:0 auto;padding:24px 16px 48px}
-h1{text-align:center;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--gold-l);margin-bottom:6px}
+h1{text-align:center;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--gold-l);margin-bottom:8px}
 .sub{text-align:center;color:var(--muted);font-size:.95rem;margin-bottom:28px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .card{
@@ -42,83 +38,60 @@ h1{text-align:center;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--gold-l);marg
 .card-sub{font-size:.82rem;color:var(--muted);line-height:1.35}
 .card-footer{margin-top:auto;padding-top:12px;border-top:1px solid rgba(148,163,184,.1);display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--dim)}
 .card-footer span:last-child{color:var(--teal);font-weight:600}
-.hint{text-align:center;color:var(--dim);font-size:.85rem;margin-top:28px}
+.hint{text-align:center;color:var(--dim);font-size:.85rem;margin-top:28px;line-height:1.5}
 @media(max-width:560px){
   .nav a{font-size:.75rem;padding:7px 10px}
-  .lang-bar{margin-left:0;width:100%;justify-content:center}
 }
 </style>
 </head>
 <body>
 <div class="nav">
-  <a href="index.html" data-i18n="navHome">Асосӣ</a>
-  <a href="photo.html" data-i18n="btnTable">Ҷадвали Менделеев</a>
-  <a href="photo2.html" data-i18n="btnInfo">Маълумот</a>
-  <a href="photo3.html" data-i18n="btnCalc">Калькулятор</a>
-  <a href="photo4.html" data-i18n="btnTest">Тестҳо</a>
-  <a href="books.html" class="active" data-i18n="btnBooks">Китобҳо</a>
-  <div class="lang-bar" id="langBar">
-    <button type="button" class="lang-btn" data-lang="tg">🇹🇯 ТОҶ</button>
-    <button type="button" class="lang-btn" data-lang="ru">🇷🇺 РУС</button>
-    <button type="button" class="lang-btn" data-lang="en">🇬🇧 ENG</button>
-  </div>
+  <a href="index.html">Асосӣ</a>
+  <a href="photo.html">Ҷадвали Менделеев</a>
+  <a href="photo2.html">Маълумот</a>
+  <a href="photo3.html">Калькулятор</a>
+  <a href="photo4.html">Тестҳо</a>
+  <a href="books.html" class="active">Китобҳо</a>
 </div>
 
 <main class="wrap">
-  <h1 data-i18n="booksHeading">Китобҳо / Учебники</h1>
-  <p class="sub" data-i18n="booksSub">Китобҳои дарсии химия — ҷустуҷӯи мавзӯъ ва гузаштан ба саҳифа</p>
-  <div class="grid" id="booksGrid"></div>
-  <p class="hint" data-i18n="booksHint">Барои илова кардани китоби нав файлро ба папкаи books ҷойгир кунед ва ба books-data.js илова намоед.</p>
+  <h1>Китобҳо</h1>
+  <p class="sub">Китобҳои дарсии химия</p>
+  <div class="grid">
+    <a class="card" href="books/ximiya-8.pdf" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="cover" style="background:#c9a227">8</div>
+        <div class="card-meta">
+          <div class="card-grade">Химия · синфи 8</div>
+          <div class="card-title">Химия — синфи 8</div>
+          <div class="card-sub">Китоби дарсӣ барои синфи 8</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Х. Иброҳимов ва диг.</span>
+        <span>Кушодан →</span>
+      </div>
+    </a>
+    <a class="card" href="books/ximiya-9.pdf" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="cover" style="background:#2dd4bf">9</div>
+        <div class="card-meta">
+          <div class="card-grade">Химия · синфи 9</div>
+          <div class="card-title">Химия — синфи 9</div>
+          <div class="card-sub">Китоби дарсӣ барои синфи 9</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Химия 9</span>
+        <span>Кушодан →</span>
+      </div>
+    </a>
+  </div>
+  <p class="hint">
+    PDF-файлҳоро ба папкаи <strong>books</strong> гузоред.<br>
+    Барои иловаи китоби нав (10, 11 синф) — ба HTML як корти нав илова кунед.
+  </p>
 </main>
-
-<script src="js/i18n.js"></script>
-<script src="js/books-data.js"></script>
-<script>
-(function(){
-  function lang(){ return (window.i18n && i18n.getLanguage) ? i18n.getLanguage() : 'tg'; }
-
-  function render(){
-    const L = lang();
-    const grid = document.getElementById('booksGrid');
-    if (!window.BooksData) { grid.innerHTML = '<p>Маълумот бор нашуд.</p>'; return; }
-    grid.innerHTML = BooksData.books.map(function(b){
-      const title = BooksData.t(b, 'title', L);
-      const sub = BooksData.t(b, 'subtitle', L);
-      return '<a class="card" href="book-viewer.html?id=' + encodeURIComponent(b.id) + '">' +
-        '<div class="card-top">' +
-          '<div class="cover" style="background:' + b.coverColor + '">' + b.grade + '</div>' +
-          '<div class="card-meta">' +
-            '<div class="card-grade">' + b.subject + ' · ' + b.grade + '</div>' +
-            '<div class="card-title">' + title + '</div>' +
-            '<div class="card-sub">' + sub + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="card-footer">' +
-          '<span>' + (b.authors || '').split(',')[0] + (b.authors && b.authors.indexOf(',')>=0 ? ' ва диг.' : '') + '</span>' +
-          '<span>' + b.pages + ' саҳ.</span>' +
-        '</div>' +
-      '</a>';
-    }).join('');
-  }
-
-  function wireLang(){
-    var bar = document.getElementById('langBar');
-    if (!bar || !window.i18n) return;
-    bar.querySelectorAll('.lang-btn').forEach(function(btn){
-      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang());
-      btn.addEventListener('click', function(){
-        i18n.setLanguage(btn.getAttribute('data-lang'));
-        bar.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
-        render();
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ wireLang(); render(); });
-  } else { wireLang(); render(); }
-})();
-</script>
 <script src="js/site-runtime.js"></script>
 </body>
 </html>
