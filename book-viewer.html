@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="tj">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Китоб — SCANNERI ELEMENTHO</title>
+<style>
+:root{
+  --bg:#0c1222;--gold:#c9a227;--gold-l:#e8d48b;--teal:#2dd4bf;
+  --text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;
+  --surf:rgba(20,28,46,.95);--border:rgba(201,162,39,.22);
+  --panel-w:320px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+.top{
+  flex-shrink:0;display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid rgba(148,163,184,.12);
+  background:rgba(12,18,34,.96);backdrop-filter:blur(10px);z-index:20;
+}
+.top a.back{
+  color:var(--gold-l);text-decoration:none;font-size:.82rem;font-weight:600;
+  padding:7px 12px;border:1px solid var(--border);border-radius:8px;white-space:nowrap;
+}
+.top a.back:hover{background:rgba(201,162,39,.12)}
+.book-title{font-weight:700;font-size:.95rem;color:var(--gold-l);flex:1;min-width:120px}
+.page-ctrl{display:flex;align-items:center;gap:6px}
+.page-ctrl button{
+  background:rgba(201,162,39,.1);border:1px solid var(--border);color:var(--gold-l);
+  width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1rem;font-weight:700;
+}
+.page-ctrl button:hover{background:rgba(201,162,39,.22)}
+.page-ctrl input{
+  width:56px;text-align:center;padding:6px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(0,0,0,.35);color:var(--text);font-size:.9rem;
+}
+.page-ctrl .of{color:var(--muted);font-size:.85rem}
+.btn-toc,.btn-dl{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:7px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600;
+}
+.btn-toc:hover,.btn-dl:hover{color:var(--gold-l);border-color:var(--gold)}
+.btn-toc.active{background:rgba(201,162,39,.15);color:var(--gold-l);border-color:var(--gold)}
+
+.main{flex:1;display:flex;min-height:0;position:relative}
+
+.side{
+  width:var(--panel-w);flex-shrink:0;background:var(--surf);border-right:1px solid rgba(148,163,184,.12);
+  display:flex;flex-direction:column;overflow:hidden;transition:transform .25s ease;
+}
+.side.hidden-desktop{display:none}
+.search-box{padding:12px;border-bottom:1px solid rgba(148,163,184,.1);flex-shrink:0}
+.search-box input{
+  width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border);
+  background:rgba(0,0,0,.35);color:var(--text);font-size:.92rem;
+}
+.search-box input:focus{outline:none;border-color:var(--gold)}
+.search-box input::placeholder{color:var(--dim)}
+.side-tabs{display:flex;border-bottom:1px solid rgba(148,163,184,.1);flex-shrink:0}
+.side-tabs button{
+  flex:1;padding:10px;background:transparent;border:none;color:var(--muted);
+  font-size:.8rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;
+}
+.side-tabs button.active{color:var(--gold-l);border-bottom-color:var(--gold)}
+.side-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px}
+.toc-item,.result-item{
+  display:block;width:100%;text-align:left;padding:10px 12px;border:none;border-radius:8px;
+  background:transparent;color:var(--text);cursor:pointer;font-size:.84rem;line-height:1.35;
+  margin-bottom:2px;
+}
+.toc-item:hover,.result-item:hover{background:rgba(201,162,39,.1)}
+.toc-item .pg,.result-item .pg{color:var(--teal);font-weight:600;font-size:.78rem;margin-left:6px;white-space:nowrap}
+.toc-chapter{
+  font-size:.7rem;font-weight:700;color:var(--gold);text-transform:uppercase;
+  letter-spacing:.04em;padding:12px 12px 4px;margin-top:6px;
+}
+.result-item .snippet{display:block;color:var(--muted);font-size:.78rem;margin-top:4px}
+.empty{color:var(--dim);font-size:.85rem;padding:16px;text-align:center}
+
+.viewer{
+  flex:1;min-width:0;display:flex;flex-direction:column;background:#1a1f2e;
+  position:relative;
+}
+#pdfFrame{
+  flex:1;width:100%;height:100%;border:none;background:#1a1f2e;
+}
+.viewer-fallback{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:24px;text-align:center;color:var(--muted);pointer-events:none;opacity:0;
+  transition:opacity .3s;
+}
+.viewer-fallback.show{opacity:1;pointer-events:auto}
+.viewer-fallback a{
+  display:inline-flex;padding:12px 20px;border-radius:10px;
+  background:linear-gradient(135deg,#c9a227,#a8841a);color:#0c1222;font-weight:700;text-decoration:none;
+}
+
+.overlay-side{
+  display:none;position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);
+}
+.overlay-side.open{display:block}
+.side.mobile-open{
+  position:fixed;left:0;top:0;bottom:0;z-index:40;transform:translateX(0);
+  box-shadow:8px 0 32px rgba(0,0,0,.4);
+}
+
+@media(max-width:860px){
+  .side{
+    position:fixed;left:0;top:0;bottom:0;z-index:40;
+    transform:translateX(-105%);width:min(var(--panel-w),88vw);
+  }
+  .side.mobile-open{transform:translateX(0)}
+  .side.hidden-desktop{display:flex}
+  .book-title{font-size:.85rem}
+}
+@media(max-width:480px){
+  .top{padding:8px 10px;gap:6px}
+  .page-ctrl input{width:44px}
+  .btn-dl{display:none}
+}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="books.html" data-i18n="booksBack">← Китобҳо</a>
+  <div class="book-title" id="bookTitle">—</div>
+  <div class="page-ctrl">
+    <button type="button" id="prevPage" title="Саҳифаи қаблӣ">‹</button>
+    <input type="number" id="pageInput" min="1" value="1" aria-label="Саҳифа">
+    <span class="of">/ <span id="pageTotal">—</span></span>
+    <button type="button" id="nextPage" title="Саҳифаи баъдӣ">›</button>
+  </div>
+  <button type="button" class="btn-toc" id="tocToggle" data-i18n="booksToc">Мундариҷа</button>
+  <a class="btn-dl" id="dlLink" href="#" download data-i18n="booksDownload">Зеркашӣ</a>
+</div>
+
+<div class="main">
+  <aside class="side" id="sidePanel">
+    <div class="search-box">
+      <input type="search" id="searchInput" placeholder="Ҷустуҷӯ аз рӯйи мавзӯъ..." data-i18n-placeholder="booksSearchPh" autocomplete="off">
+    </div>
+    <div class="side-tabs">
+      <button type="button" class="active" data-tab="toc" data-i18n="booksToc">Мундариҷа</button>
+      <button type="button" data-tab="results" data-i18n="booksResults">Натиҷаҳо</button>
+    </div>
+    <div class="side-body" id="sideBody"></div>
+  </aside>
+  <div class="overlay-side" id="overlay"></div>
+
+  <div class="viewer">
+    <iframe id="pdfFrame" title="PDF viewer"></iframe>
+    <div class="viewer-fallback" id="fallback">
+      <p data-i18n="booksFallback">Агар PDF дар браузер кушода нашавад, файлро зеркашӣ кунед.</p>
+      <a id="fallbackLink" href="#" download data-i18n="booksDownload">Зеркашӣ PDF</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/books-data.js"></script>
+<script>
+(function(){
+  var book = null;
+  var currentPage = 1;
+  var totalPages = 1;
+  var activeTab = 'toc';
+  var lastResults = [];
+
+  function qs(name){
+    var m = location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function lang(){ return (window.i18n && i18n.getLanguage) ? i18n.getLanguage() : 'tg'; }
+
+  function goToPage(p){
+    if (!book) return;
+    p = Math.max(1, Math.min(totalPages, parseInt(p, 10) || 1));
+    currentPage = p;
+    document.getElementById('pageInput').value = p;
+    var frame = document.getElementById('pdfFrame');
+    var base = book.file;
+    frame.src = base + '#page=' + p + '&view=FitH&toolbar=1&navpanes=0';
+  }
+
+  function renderToc(){
+    if (!book) return;
+    var html = '';
+    var lastCh = null;
+    book.toc.forEach(function(item){
+      if (item.chapter && item.chapter !== lastCh) {
+        lastCh = item.chapter;
+        html += '<div class="toc-chapter">' + escapeHtml(item.chapter) + '</div>';
+      }
+      html += '<button type="button" class="toc-item" data-page="' + item.page + '">' +
+        escapeHtml(item.title) + '<span class="pg">с. ' + item.page + '</span></button>';
+    });
+    document.getElementById('sideBody').innerHTML = html || '<div class="empty">Мундариҷа нест</div>';
+    bindPageButtons();
+  }
+
+  function renderResults(list){
+    lastResults = list || [];
+    if (!lastResults.length) {
+      document.getElementById('sideBody').innerHTML = '<div class="empty" data-i18n="booksNoResults">Чизе ёфт нашуд. Мавзӯъ ё калима ворид кунед.</div>';
+      return;
+    }
+    var html = lastResults.map(function(item){
+      return '<button type="button" class="result-item" data-page="' + item.page + '">' +
+        '<span>' + escapeHtml(item.title) + '<span class="pg">с. ' + item.page + '</span></span>' +
+        (item.chapter ? '<span class="snippet">' + escapeHtml(item.chapter) + '</span>' : '') +
+        '</button>';
+    }).join('');
+    document.getElementById('sideBody').innerHTML = html;
+    bindPageButtons();
+  }
+
+  function bindPageButtons(){
+    document.querySelectorAll('#sideBody [data-page]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        goToPage(btn.getAttribute('data-page'));
+        closeMobileSide();
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+  }
+
+  function doSearch(){
+    var q = document.getElementById('searchInput').value;
+    activeTab = 'results';
+    document.querySelectorAll('.side-tabs button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-tab') === 'results');
+    });
+    if (!q.trim()) {
+      renderResults([]);
+      return;
+    }
+    var res = BooksData.searchBook(book.id, q);
+    renderResults(res);
+  }
+
+  function openMobileSide(){
+    document.getElementById('sidePanel').classList.add('mobile-open');
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('tocToggle').classList.add('active');
+  }
+  function closeMobileSide(){
+    document.getElementById('sidePanel').classList.remove('mobile-open');
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('tocToggle').classList.remove('active');
+  }
+
+  function init(){
+    var id = qs('id');
+    book = BooksData.getBook(id);
+    if (!book) {
+      document.getElementById('bookTitle').textContent = 'Китоб ёфт нашуд';
+      return;
+    }
+    totalPages = book.pages || 1;
+    document.getElementById('pageTotal').textContent = totalPages;
+    document.getElementById('pageInput').max = totalPages;
+    document.getElementById('bookTitle').textContent = BooksData.t(book, 'title', lang());
+    document.title = BooksData.t(book, 'title', lang()) + ' — SCANNERI ELEMENTHO';
+
+    var dl = document.getElementById('dlLink');
+    dl.href = book.file;
+    dl.download = book.id + '.pdf';
+    document.getElementById('fallbackLink').href = book.file;
+
+    document.getElementById('prevPage').addEventListener('click', function(){ goToPage(currentPage - 1); });
+    document.getElementById('nextPage').addEventListener('click', function(){ goToPage(currentPage + 1); });
+    document.getElementById('pageInput').addEventListener('change', function(){ goToPage(this.value); });
+    document.getElementById('pageInput').addEventListener('keydown', function(e){
+      if (e.key === 'Enter') goToPage(this.value);
+    });
+
+    var searchTimer;
+    document.getElementById('searchInput').addEventListener('input', function(){
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(doSearch, 220);
+    });
+    document.getElementById('searchInput').addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+    });
+
+    document.querySelectorAll('.side-tabs button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        activeTab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.side-tabs button').forEach(function(b){ b.classList.toggle('active', b === btn); });
+        if (activeTab === 'toc') renderToc();
+        else renderResults(lastResults);
+      });
+    });
+
+    document.getElementById('tocToggle').addEventListener('click', function(){
+      var panel = document.getElementById('sidePanel');
+      if (window.innerWidth <= 860) {
+        if (panel.classList.contains('mobile-open')) closeMobileSide();
+        else openMobileSide();
+      } else {
+        panel.classList.toggle('hidden-desktop');
+        this.classList.toggle('active', !panel.classList.contains('hidden-desktop'));
+      }
+    });
+    document.getElementById('overlay').addEventListener('click', closeMobileSide);
+
+    renderToc();
+    var start = parseInt(qs('page'), 10) || (book.toc[0] && book.toc[0].page) || 1;
+    goToPage(start);
+
+    setTimeout(function(){
+      try {
+        var f = document.getElementById('pdfFrame');
+      } catch(e) {}
+    }, 4000);
+  }
+
+  function wireLang(){
+    document.addEventListener('languageChanged', function(){
+      if (book) document.getElementById('bookTitle').textContent = BooksData.t(book, 'title', lang());
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){ init(); wireLang(); });
+  } else { init(); wireLang(); }
+})();
+</script>
+<script src="js/site-runtime.js"></script>
+</body>
+</html>
